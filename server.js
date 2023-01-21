@@ -1,4 +1,4 @@
-const config = require('./config')
+const config = require('./src/config')
 const createServer = require('./app')
 const { port, env } = config
 

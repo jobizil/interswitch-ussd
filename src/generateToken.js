@@ -1,28 +1,21 @@
 const axios = require('axios')
-const { client_id, client_secret, grant_type, token_url } = require('../config')
+const { client_id, client_secret, grant_type } = require('./config')
+const generateTokenHelper = require('./util/generateTokenHelper')
 
-const generateToken = async (req, res) => {
+const generateToken = async (_req, res) => {
   try {
-    const options = {
-      url: token_url,
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        Authorization: `Basic ${Buffer.from(
-          `${client_id}:${client_secret}`
-        ).toString('base64')}`,
-      },
-      data: `grant_type=${grant_type}`,
-    }
+    const option = generateTokenHelper(client_id, client_secret, grant_type)
 
-    const response = await axios(options)
-    res.status(response.status).json(response.data)
+    const result = await axios(option)
+
+    res.status(result.status).json(result.data)
   } catch (err) {
-    if (err.response) {
+    if (err.result) {
       res
-        .status(err.response.status)
-        .json({ error: { message: err.response.data } })
+        .status(err.result.status)
+        .json({ error: { message: err.result.data } })
     } else {
+      console.log(err)
       res.status(500).json({ error: { message: err.message } })
     }
   }
