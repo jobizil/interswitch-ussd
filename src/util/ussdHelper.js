@@ -2,6 +2,11 @@ const { ussd_url } = require('../config')
 const validateUssd = require('../util/ussd.validator')
 const transactionReference = require('./generateReference')
 
+/*  Takes in a data parameter and uses it to validate the USSD. 
+  
+
+*/
+
 const getUssdHelper = async data => {
   const value = await validateUssd(data.body)
 
@@ -10,7 +15,6 @@ const getUssdHelper = async data => {
   const token = authorization.startsWith('Bearer')
     ? authorization.split(' ')[1]
     : authorization
-  console.log(token)
 
   if (!token)
     return res.status(401).json({ error: 'Authorization token is missing' })

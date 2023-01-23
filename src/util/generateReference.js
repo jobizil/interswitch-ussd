@@ -1,3 +1,8 @@
+/* 
+  Generates a random string of characters to be used as a transaction reference
+
+*/
+
 const crypto = require('crypto')
 
 const transactionReference = (length = 10) => {

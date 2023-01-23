@@ -1,6 +1,11 @@
 const axios = require('axios')
 const { token_url } = require('../config')
 
+/* 
+  Generates a token to be used for subsequent requests to the get token API
+
+*/
+
 const generateTokenHelper = (client_id, client_secret, grant_type) => {
   const authToken = `Basic ${Buffer.from(
     `${client_id}:${client_secret}`

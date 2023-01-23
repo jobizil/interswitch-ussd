@@ -2,10 +2,13 @@ const axios = require('axios')
 
 const getUssdHelper = require('./util/ussdHelper')
 
+/*
+Uses the getUssdHelper function to make a request to the getUssd API
+*/
+
 const getUssd = async (req, res) => {
   try {
     const options = await getUssdHelper(req)
-
     const response = await axios(options)
 
     return res.status(response.status).json(response.data)

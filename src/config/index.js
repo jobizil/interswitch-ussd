@@ -10,6 +10,7 @@ const {
   TOKEN_URL,
   USSD_URL,
   NODE_ENV,
+  ACCESS_TOKEN,
 } = process.env
 
 module.exports = {
@@ -20,4 +21,5 @@ module.exports = {
   ussd_url: USSD_URL,
   env: NODE_ENV,
   port: PORT,
+  access_token: ACCESS_TOKEN,
 }
