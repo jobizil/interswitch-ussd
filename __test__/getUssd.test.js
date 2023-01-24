@@ -1,7 +1,5 @@
 const { setupServer } = require('msw/node')
 const { rest } = require('msw')
-const axios = require('axios')
-const getUssdHelper = require('../src/util/ussdHelper')
 const getUssd = require('../src/getUssd')
 const { ussd_url, access_token } = require('../src/config')
 
@@ -24,44 +22,59 @@ beforeAll(() => server.listen())
 afterAll(() => server.close())
 afterEach(() => server.resetHandlers())
 
-let options = {
-  url: ussd_url,
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    authorization: `Bearer ${access_token}`,
-  },
-  data: {
-    amount: '100',
-    bankCode: 'GTB',
-    surcharge: '0',
-    currencyCode: '566',
-  },
-}
-
 const valid_data = {
-  amount: '100',
-  bankCode: 'GTB',
+  amount: '2000',
+  bankCode: 'ACCESS',
   surcharge: '0',
   currencyCode: '566',
+  merchantTransactionReference: 'ef020d602d',
 }
 
-const req = {
-  body: valid_data,
-  headers: {
-    authorization: `Bearer ${access_token}`,
+const res = {
+  status: code => {
+    return {
+      json: data => {
+        return {
+          code,
+          data,
+        }
+      },
+    }
   },
 }
 
 describe('Initiate USSD transaction', () => {
-  it('should initiate USSD transaction successfully', async () => {
-    const res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn().mockReturnThis(),
+  it('should return 401 invalid token', async () => {
+    const req = {
+      body: valid_data,
+      headers: {
+        authorization: `Bearer invalid_access_token`,
+      },
     }
-    const result = await getUssdHelper(req)
+    server.use(
+      rest.post(ussd_url, async (req, res, ctx) => {
+        const result = await getUssd(req, res)
+        expect(result.code).toBe(401)
+      })
+    )
 
-    expect(result).toHaveProperty('url')
-    expect(result).toHaveProperty('headers')
+    server.resetHandlers()
+  })
+
+  it('should return 200 with valid token', async () => {
+    const req = {
+      body: valid_data,
+      headers: {
+        authorization: `Bearer ${access_token}`,
+      },
+    }
+
+    server.use(
+      rest.post(ussd_url, async (req, res, ctx) => {
+        const result = await getUssd(req, res)
+        expect(result.code).toBe(200)
+      })
+    )
+    server.resetHandlers()
   })
 })
