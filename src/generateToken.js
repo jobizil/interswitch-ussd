@@ -13,14 +13,14 @@ const generateToken = async (_req, res) => {
 
     const result = await axios(option)
 
-    res.status(result.status).json(result.data)
+    return res.status(result.status).json(result.data)
   } catch (err) {
     if (err.result) {
-      res
+      return res
         .status(err.result.status)
         .json({ error: { message: err.result.data } })
     } else {
-      res.status(500).json({ error: { message: err.message } })
+      return res.status(500).json({ error: { message: err.message } })
     }
   }
 }
